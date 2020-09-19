@@ -10,5 +10,8 @@ services:
     - "./waf-scripts:/srv/waf-scripts"
     - "./logs:/logs"
     environment: 
-      BLOCK_EXPIRE: 5 # second
-      BLOCK_LIMIT: 10 # second
+      COUNT_CYCLE: 10
+      BASE_BAN_LIMIT: 20
+      BASE_BAN_EXPIRE: 10
+      SUPER_BAN_LIMIT: 100
+      SUPER_EXPIRE: 3600
