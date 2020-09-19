@@ -8,12 +8,15 @@ local super_ban_limit = tonumber(os.getenv("SUPER_BAN_LIMIT")) or 100
 local super_expire = tonumber(os.getenv("SUPER_EXPIRE")) or 3600
 
 -- get remote ip address
+-- local a = "2.2.2.2, 3.3.3.3, 1.1.1.1"
+-- local new_str, n, err = ngx.re.gsub(a, "[, ]", "_")
+-- ngx.log(ngx.ERR, "new_str: ", new_str)
 local remote_ip = ngx.req.get_headers()["X-Real-IP"]
 if remote_ip == nil then
-   remote_ip = ngx.req.get_headers()["x_forwarded_for"]
+   remote_ip = ngx.re.gsub(ngx.req.get_headers()["x_forwarded_for"], "[, ]", "_")
 end
 if remote_ip == nil then
-   remote_ip = ngx.var.remote_addr
+   remote_ip =  ngx.re.gsub(ngx.var.remote_addr, "[, ]", "_")
 end
 
 local dict = ngx.shared.filter_dict
@@ -38,3 +41,4 @@ elseif base_counts >= base_ban_limit then
 else
    dict:incr(filter_key, 1)
 end
+
