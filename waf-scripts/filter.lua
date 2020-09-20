@@ -14,7 +14,7 @@ local super_expire = tonumber(os.getenv("SUPER_EXPIRE")) or 3600
 --    ngx.log(ngx.ERR, "from: ", from, " to: ", to)
 --    tmp_str = string.sub(tmp_str, 1, from - 1)
 -- end
-ngx.log(ngx.ERR, "new_str: ", tmp_str)
+-- ngx.log(ngx.ERR, "new_str: ", tmp_str)
 local remote_ip = ngx.req.get_headers()["x-forwarded-for"]
 if remote_ip == nil or string.len(remote_ip) == 0 or remote_ip == "unknown" then
    remote_ip = ngx.var.remote_addr
@@ -38,12 +38,12 @@ if base_counts >= super_ban_limit then
    dict:set(filter_key, base_counts, super_expire)
    dict:incr(filter_key, 1)
    ngx.log(ngx.ERR, "super_ban ==> ", "count: ", base_counts, " , key: ", filter_key)
-   ngx.exit(403)
+   ngx.exit(444)
 elseif base_counts >= base_ban_limit then
    dict:set(filter_key, base_counts, base_ban_expire)
    dict:incr(filter_key, 1)
    ngx.log(ngx.ERR, "base_ban ==> ", "count: ", base_counts, " , key: ", filter_key)
-   ngx.exit(403)
+   ngx.exit(504)
 else
    dict:incr(filter_key, 1)
 end
