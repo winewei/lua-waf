@@ -8,15 +8,21 @@ local super_ban_limit = tonumber(os.getenv("SUPER_BAN_LIMIT")) or 100
 local super_expire = tonumber(os.getenv("SUPER_EXPIRE")) or 3600
 
 -- get remote ip address
--- local a = "2.2.2.2, 3.3.3.3, 1.1.1.1"
--- local new_str, n, err = ngx.re.gsub(a, "[, ]", "_")
--- ngx.log(ngx.ERR, "new_str: ", new_str)
-local remote_ip = ngx.req.get_headers()["X-Real-IP"]
-if remote_ip == nil then
-   remote_ip = ngx.re.gsub(ngx.req.get_headers()["x_forwarded_for"], "[, ]", "_")
+-- local tmp_str = "1.1.1.1, 2.2.2.2"
+-- if tmp_str ~= nil and string.len(tmp_str) >15  then
+--    local from, to, err  = ngx.re.find(tmp_str, ",", "jo")
+--    ngx.log(ngx.ERR, "from: ", from, " to: ", to)
+--    tmp_str = string.sub(tmp_str, 1, from - 1)
+-- end
+ngx.log(ngx.ERR, "new_str: ", tmp_str)
+local remote_ip = ngx.req.get_headers()["x-forwarded-for"]
+if remote_ip == nil or string.len(remote_ip) == 0 or remote_ip == "unknown" then
+   remote_ip = ngx.var.remote_addr
 end
-if remote_ip == nil then
-   remote_ip =  ngx.re.gsub(ngx.var.remote_addr, "[, ]", "_")
+-- split ','
+if remote_ip ~= nil and string.len(remote_ip) >15  then
+       local index = ngx.re.find(remote_ip, ",", "jo")
+       remote_ip = string.sub(remote_ip, 1, index - 1)
 end
 
 local dict = ngx.shared.filter_dict
