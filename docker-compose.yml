@@ -1,17 +1,22 @@
 version: "3"
-services: 
+services:
   waf:
     image: openresty/openresty:alpine
-    ports: 
+    ports:
     - "80:80"
     volumes: 
     - "./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf"
     - "./proxy.conf:/etc/nginx/conf.d/default.conf"
     - "./waf-scripts:/srv/waf-scripts"
-    - "./logs:/logs"
-    environment: 
+    - "./data/logs:/logs"
+    environment:
       COUNT_CYCLE: 10
       BASE_BAN_LIMIT: 20
       BASE_BAN_EXPIRE: 10
-      SUPER_BAN_LIMIT: 100
+      SUPER_BAN_LIMIT: 50
       SUPER_EXPIRE: 3600
+  # # redis
+  # redis:
+  #   image: redis:3.2-alpine
+  #   volumes:
+  #   - "./data/redis:/data"
