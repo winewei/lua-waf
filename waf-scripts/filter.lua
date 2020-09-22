@@ -7,6 +7,8 @@ local base_ban_limit = tonumber(os.getenv("BASE_BAN_LIMIT")) or 30
 local base_ban_expire = tonumber(os.getenv("BASE_BAN_EXPIRE")) or 600
 local super_ban_limit = tonumber(os.getenv("SUPER_BAN_LIMIT")) or 100
 local super_expire = tonumber(os.getenv("SUPER_EXPIRE")) or 3600
+local redishost = os.getenv("REDISHOST") or "127.0.0.1"
+local redisport = os.getenv("REDISPORT") or "6379"
 
 -- redis
 local function close_redis(red)
@@ -26,7 +28,7 @@ end
 -- if redis connect error, pass request
 local red = redis:new()
 red:set_timeout(1000)
-local ok, err = red:connect("192.168.88.73", "6379")
+local ok, err = red:connect(redishost, redisport)
 if not ok then
    ngx.log(ngx.ERR, "failed to connect: ", err)
    return
@@ -59,7 +61,7 @@ dict:incr(filter_key, 1)
 local base_counts, err = dict:get(filter_key)
 
 -- filter
-local host = ngx.req.get_headers()["Host"]
+-- local host = ngx.req.get_headers()["Host"]
 local redis_ban_key = "super_blacklist:" .. remote_ip
 if base_counts >= super_ban_limit then
    dict:set(filter_key, base_counts, super_expire)
@@ -67,8 +69,8 @@ if base_counts >= super_ban_limit then
    local o = red:GET(redis_ban_key)
    if o == ngx.null then
       ngx.log(ngx.ERR, "set redis key: ", redis_ban_key)
-      local t_key = host .. ":" .. remote_ip
-      red:SET(redis_ban_key, t_key)
+      -- local t_key = host .. ":" .. remote_ip
+      red:SET(redis_ban_key, remote_ip)
       red:EXPIRE(redis_ban_key, super_expire)
    end
    close_redis(red)

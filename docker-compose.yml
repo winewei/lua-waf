@@ -15,6 +15,7 @@ services:
       BASE_BAN_EXPIRE: 10
       SUPER_BAN_LIMIT: 50
       SUPER_EXPIRE: 3600
+      REDISHOST: "192.168.88.73"
   # # redis
   # redis:
   #   image: redis:3.2-alpine
