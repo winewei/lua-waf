@@ -66,15 +66,17 @@ local redis_ban_key = "super_blacklist:" .. remote_ip
 if base_counts >= super_ban_limit then
    dict:set(filter_key, base_counts, super_expire)
    dict:incr(filter_key, 1)
-   local o = red:GET(redis_ban_key)
-   if o == ngx.null then
-      ngx.log(ngx.ERR, "set redis key: ", redis_ban_key)
-      -- local t_key = host .. ":" .. remote_ip
-      red:SET(redis_ban_key, remote_ip)
-      red:EXPIRE(redis_ban_key, super_expire)
+
+   local set_redis_key = "set_redis_key:" .. redis_ban_key
+   local ok, err = dict:get(set_redis_key)
+   if ok == nil then
+         dict:set(set_redis_key, 1, 10)
+         ngx.log(ngx.ERR, "set redis key: ", redis_ban_key)
+         ngx.log(ngx.ERR, "super_ban ==> ", "count: ", base_counts, " , key: ", filter_key)
+         red:SET(redis_ban_key, remote_ip)
+         red:EXPIRE(redis_ban_key, super_expire)
    end
    close_redis(red)
-   ngx.log(ngx.ERR, "super_ban ==> ", "count: ", base_counts, " , key: ", filter_key)
    ngx.exit(403)
 elseif base_counts >= base_ban_limit then
    dict:set(filter_key, base_counts, base_ban_expire)
