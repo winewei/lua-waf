@@ -15,9 +15,9 @@ docker-compose up -d
   ```
 - update [`docker-compose`](docker-compose.yml) environment
     ```
-    COUNT_CYCLE: 10
+    BASE_COUNT_TTL: 10
     BASE_BAN_LIMIT: 20
-    BASE_BAN_EXPIRE: 10
+    BASE_BAN_TTL: 10
     SUPER_BAN_LIMIT: 100
-    SUPER_EXPIRE: 3600
+    SUPER_BAN_TLL: 3600
     ```
