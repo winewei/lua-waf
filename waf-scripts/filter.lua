@@ -57,7 +57,6 @@ local dict = ngx.shared.filter_dict
 local filter_key = remote_ip .. ngx.var.uri
 
 dict:safe_add(filter_key, 1, base_count_ttl)
-dict:incr(filter_key, 1)
 
 -- save in nginx shared memory
 local request_count, err = dict:get(filter_key)
@@ -66,7 +65,7 @@ local request_count, err = dict:get(filter_key)
 local hostname = ngx.var.http_host
 local redis_ban_key = "super_blacklist:" .. hostname .. ":".. remote_ip
 if request_count >= super_ban_limit then
-   dict:set(filter_key, request_count, super_ban_ttl)
+   dict:set(filter_key, request_count, base_ban_ttl )
    dict:incr(filter_key, 1)
 
    local set_redis_key = "set_redis_key:" .. redis_ban_key
@@ -75,7 +74,7 @@ if request_count >= super_ban_limit then
          dict:set(set_redis_key, 1, base_count_ttl)
          ngx.log(ngx.ERR, "set redis key: ", redis_ban_key)
          ngx.log(ngx.ERR, "super_ban ==> ", "count: ", request_count, " , key: ", filter_key)
-         red:SET(redis_ban_key, remote_ip)
+         red:SET(redis_ban_key, 1)
          red:EXPIRE(redis_ban_key, super_ban_ttl)
    end
    close_redis(red)

@@ -8,7 +8,7 @@ docker-compose up -d
 ```
 
 ## Set the block
-- update web site you would like to protect in [`proxy.conf`](proxy.conf)
+- update web site you would like to protect in [`conf.d/proxy.conf`](conf.d/proxy.conf)
   ```
   proxy_pass  https://localhost;
   proxy_set_header Host "localhost";
@@ -16,8 +16,10 @@ docker-compose up -d
 - update [`docker-compose`](docker-compose.yml) environment
     ```
     BASE_COUNT_TTL: 10
-    BASE_BAN_LIMIT: 20
-    BASE_BAN_TTL: 10
-    SUPER_BAN_LIMIT: 100
+    BASE_BAN_LIMIT: 10
+    BASE_BAN_TTL: 60
+    SUPER_BAN_LIMIT: 50
     SUPER_BAN_TLL: 3600
+    REDISHOST: "192.168.1.2"
+    REDISPORT: 6379
     ```
