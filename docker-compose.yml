@@ -15,7 +15,7 @@ services:
       BASE_BAN_TTL: 60
       SUPER_BAN_LIMIT: 50
       SUPER_BAN_TLL: 3600
-      REDISHOST: "192.168.88.66"
+      REDISHOST: "10.15.0.180"
       REDISPORT: 6379
 #  redis:
 #   image: redis:3.2-alpine
